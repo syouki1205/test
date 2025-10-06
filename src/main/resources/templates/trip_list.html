@@ -82,22 +82,22 @@
 	</div>
 
 	<!-- 検索・フィルタフォーム -->
-	<form method="get" th:action="@{/trips/user/{userId}(userId=${user.id})}" class="filter-box row g-2">
+	<form method="get" action="/trips" class="filter-box row g-2">
 		<div class="col-auto">
 			<input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="キーワード検索">
 		</div>
 
 		<!-- 地方プルダウン -->
 		<div class="col-auto">
-			<select id="region" class="form-select" name="region">
+			<select id="region" class="form-select">
 				<option value="">地方を選択</option>
-				<option value="北海道・東北" th:selected="${region == '北海道・東北'}">北海道・東北</option>
-				<option value="関東" th:selected="${region == '関東'}">関東</option>
-				<option value="中部" th:selected="${region == '中部'}">中部</option>
-				<option value="近畿" th:selected="${region == '近畿'}">近畿</option>
-				<option value="中国" th:selected="${region == '中国'}">中国</option>
-				<option value="四国" th:selected="${region == '四国'}">四国</option>
-				<option value="九州・沖縄" th:selected="${region == '九州・沖縄'}">九州・沖縄</option>
+				<option value="北海道・東北">北海道・東北</option>
+				<option value="関東">関東</option>
+				<option value="中部">中部</option>
+				<option value="近畿">近畿</option>
+				<option value="中国">中国</option>
+				<option value="四国">四国</option>
+				<option value="九州・沖縄">九州・沖縄</option>
 			</select>
 		</div>
 
@@ -105,8 +105,6 @@
 		<div class="col-auto">
 			<select name="prefecture" id="prefecture" class="form-select">
 				<option value="">都道府県を選択</option>
-				<option th:each="pref : ${prefectures}" th:value="${pref}" th:text="${pref}"
-					th:selected="${pref == prefecture}"></option>
 			</select>
 		</div>
 
@@ -119,8 +117,7 @@
 	</form>
 
 	<!-- 並び替えフォーム -->
-	<form method="get" th:action="@{/trips/user/{userId}(userId=${user.id})}"
-		class="sort-box d-flex align-items-center">
+	<form method="get" action="/trips" class="sort-box d-flex align-items-center">
 		<select name="sortBy" class="form-select w-auto me-2">
 			<option value="startDate" th:selected="${sortBy == 'startDate'}">出発日</option>
 			<option value="rating" th:selected="${sortBy == 'rating'}">評価</option>
@@ -151,29 +148,20 @@
 				<td th:text="${trip.rating}"></td>
 				<td>
 					<a th:href="@{'/trips/' + ${trip.id}}" class="btn btn-info btn-sm">詳細</a>
-
-					<!-- 本人のみ編集・削除ボタン表示 -->
-					<span th:if="${isOwner}">
-						<a th:href="@{'/trips/' + ${trip.id} + '/edit'}" class="btn btn-warning btn-sm">編集</a>
-
-						<!-- 削除はPOSTフォームに変更 -->
-						<form th:action="@{'/trips/' + ${trip.id} + '/delete'}" method="post" style="display:inline"
-							onsubmit="return confirm('削除してもよろしいですか？');">
-							<button type="submit" class="btn btn-danger btn-sm">削除</button>
-						</form>
-					</span>
+					<a th:href="@{'/trips/' + ${trip.id} + '/edit'}" class="btn btn-warning btn-sm">編集</a>
+					<a th:href="@{'/trips/' + ${trip.id} + '/delete'}" class="btn btn-danger btn-sm"
+						onclick="return confirm('削除してもよろしいですか？');">削除</a>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 
-	<!-- 本人のみ新規追加ボタン -->
-	<div class="mt-3" th:if="${isOwner}">
+	<div class="mt-3">
 		<a th:href="@{/trips/new}" class="btn btn-success">＋ 新規追加</a>
 	</div>
 
 	<script>
-		const prefecturesMap = {
+		const prefectures = {
 			"北海道・東北": ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],
 			"関東": ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"],
 			"中部": ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県", "三重県"],
@@ -190,8 +178,8 @@
 			const region = this.value;
 			prefectureSelect.innerHTML = "<option value=''>都道府県を選択</option>";
 
-			if (region && prefecturesMap[region]) {
-				prefecturesMap[region].forEach(pref => {
+			if (region && prefectures[region]) {
+				prefectures[region].forEach(pref => {
 					const opt = document.createElement("option");
 					opt.value = pref;
 					opt.textContent = pref;
