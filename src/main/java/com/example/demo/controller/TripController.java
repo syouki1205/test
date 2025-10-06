@@ -31,7 +31,7 @@ public class TripController {
 		this.tripRepository = tripRepository;
 		this.userRepository = userRepository;
 	}
-
+//aa
 	private static final Map<String, String[]> REGION_MAP = new LinkedHashMap<>();
 	static {
 		REGION_MAP.put("北海道・東北", new String[] { "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県" });
