@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>スポット追加 / 編集</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<style>
+		/* 背景グラデーション */
+		body {
+			background: linear-gradient(to right, #f8faff, #eef5ff);
+			font-family: "Segoe UI", Arial, sans-serif;
+		}
+
+		/* フォーム全体をカード風に */
+		.form-card {
+			background: #fff;
+			padding: 30px;
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			max-width: 600px;
+			margin: 0 auto;
+		}
+
+		/* タイトル */
+		h1 {
+			text-align: center;
+			font-weight: bold;
+			color: #333;
+			margin-bottom: 25px;
+		}
+
+		/* ラベルを少し強調 */
+		.form-label {
+			font-weight: 600;
+			color: #444;
+		}
+
+		/* 入力フィールドの強調 */
+		.form-control,
+		.form-select {
+			border-radius: 8px;
+			border: 1px solid #ccd6f6;
+			transition: box-shadow 0.3s, border-color 0.3s;
+		}
+
+		.form-control:focus,
+		.form-select:focus {
+			border-color: #5a8dee;
+			box-shadow: 0 0 6px rgba(90, 141, 238, 0.3);
+		}
+
+		/* ボタン */
+		.btn-primary {
+			background-color: #0056b3;
+			border-color: #004494;
+			font-weight: 600;
+			border-radius: 8px;
+			padding: 8px 20px;
+		}
+
+		.btn-primary:hover {
+			background-color: #004494;
+		}
+
+		.btn-secondary {
+			font-weight: 600;
+			border-radius: 8px;
+			padding: 8px 20px;
+		}
+	</style>
+</head>
+
+<body class="container mt-4">
+	<div class="form-card">
+		<!-- フォームタイトル -->
+		<h1 th:text="${spot.id != null} ? 'スポット編集' : 'スポット追加'">スポットフォーム</h1>
+
+		<!-- フォーム -->
+		<form th:action="${spot.id != null} ? @{/trips/{tripId}/spots/{spotId}/update(tripId=${trip.id}, spotId=${spot.id})} 
+                                     : @{/trips/{tripId}/spots(tripId=${trip.id})}" th:object="${spot}" method="post">
+
+			<div class="mb-3">
+				<label for="name" class="form-label">スポット名</label>
+				<input type="text" id="name" th:field="*{name}" class="form-control" required />
+			</div>
+
+			<div class="mb-3">
+				<label for="category" class="form-label">カテゴリ</label>
+				<select id="category" th:field="*{category}" class="form-select" required>
+					<option value="">選択してください</option>
+					<option value="観光">観光</option>
+					<option value="グルメ">グルメ</option>
+					<option value="ショッピング">ショッピング</option>
+					<option value="自然">自然</option>
+					<option value="歴史">歴史</option>
+					<option value="宿泊">宿泊</option>
+					<option value="その他">その他</option>
+					
+				</select>
+			</div>
+
+			<div class="mb-3">
+				<label for="rating" class="form-label">評価</label>
+				<input type="number" id="rating" th:field="*{rating}" class="form-control" min="1" max="10" required />
+			</div>
+
+			<div class="mb-3">
+				<label for="comment" class="form-label">コメント</label>
+				<textarea id="comment" th:field="*{comment}" class="form-control" rows="4"></textarea>
+			</div>
+
+			<div class="d-flex justify-content-center">
+				<button type="submit" class="btn btn-primary" th:text="${spot.id != null} ? '更新' : '追加'">送信</button>
+				<a th:href="@{'/trips/' + ${trip.id}}" class="btn btn-secondary ms-2">戻る</a>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>
