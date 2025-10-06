@@ -36,7 +36,7 @@ public class TripController {
 			@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) String prefecture,
 			@RequestParam(required = false) Integer minRating,
-			@RequestParam(defaultValue = "date") String sortBy,
+			@RequestParam(defaultValue = "startDate") String sortBy,
 			@RequestParam(defaultValue = "desc") String order,
 			Model model,
 			Principal principal) {
@@ -48,7 +48,7 @@ public class TripController {
 
 		// キーワード検索（タイトル・コメント・都道府県・スポット情報）
 		if (keyword != null && !keyword.isBlank()) {
-			String lowerKeyword = keyword.toLowerCase(); // 大文字小文字を無視
+			String lowerKeyword = keyword.toLowerCase();
 			trips = trips.stream()
 					.filter(t -> t.getTitle().toLowerCase().contains(lowerKeyword) ||
 							(t.getComment() != null && t.getComment().toLowerCase().contains(lowerKeyword)) ||
@@ -77,10 +77,11 @@ public class TripController {
 					.toList();
 		}
 
-		// 並び替え
+		// 並び替え（期間対応）
 		Comparator<Trip> comparator = switch (sortBy) {
 		case "rating" -> Comparator.comparing(Trip::getRating, Comparator.nullsLast(Comparator.naturalOrder()));
-		default -> Comparator.comparing(Trip::getDate, Comparator.nullsLast(Comparator.naturalOrder()));
+		case "endDate" -> Comparator.comparing(Trip::getEndDate, Comparator.nullsLast(Comparator.naturalOrder()));
+		default -> Comparator.comparing(Trip::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()));
 		};
 		if ("desc".equals(order)) {
 			comparator = comparator.reversed();
@@ -122,14 +123,13 @@ public class TripController {
 	public String editTrip(@PathVariable Long id, Model model, Principal principal) {
 		Trip trip = tripRepository.findById(id).orElseThrow();
 
-		// ログインユーザー以外がアクセスした場合のガード
 		User user = userRepository.findByUsername(principal.getName()).orElseThrow();
 		if (!trip.getUser().equals(user)) {
 			return "redirect:/trips";
 		}
 
 		model.addAttribute("trip", trip);
-		return "trip_form"; // 旅行追加と同じフォームを再利用
+		return "trip_form";
 	}
 
 	@PostMapping("/{id}/update")
@@ -143,10 +143,11 @@ public class TripController {
 			return "redirect:/trips";
 		}
 
-		// 値を上書き
+		// ✅ フィールド更新（date → startDate, endDate）
 		trip.setTitle(tripForm.getTitle());
 		trip.setPrefecture(tripForm.getPrefecture());
-		trip.setDate(tripForm.getDate());
+		trip.setStartDate(tripForm.getStartDate());
+		trip.setEndDate(tripForm.getEndDate());
 		trip.setRating(tripForm.getRating());
 		trip.setComment(tripForm.getComment());
 

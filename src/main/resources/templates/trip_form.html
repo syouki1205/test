@@ -5,7 +5,6 @@
 	<meta charset="UTF-8" />
 	<title>旅行追加 / 編集</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
 	<style>
 		body {
 			background: linear-gradient(to right, #f8faff, #eef5ff);
@@ -106,10 +105,18 @@
 				</select>
 			</div>
 
-			<div class="mb-3">
-				<label for="date" class="form-label">日付</label>
-				<input type="date" id="date" name="date" th:value="${#temporals.format(trip.date, 'yyyy-MM-dd')}"
-					class="form-control" required />
+			<!-- 旅行期間 -->
+			<div class="row mb-3">
+				<div class="col-md-6">
+					<label for="startDate" class="form-label">開始日</label>
+					<input type="date" id="startDate" th:field="*{startDate}"
+						th:value="${#temporals.format(trip.startDate, 'yyyy-MM-dd')}" class="form-control" required />
+				</div>
+				<div class="col-md-6">
+					<label for="endDate" class="form-label">終了日</label>
+					<input type="date" id="endDate" th:field="*{endDate}"
+						th:value="${#temporals.format(trip.endDate, 'yyyy-MM-dd')}" class="form-control" required />
+				</div>
 			</div>
 
 			<div class="mb-3">
@@ -145,6 +152,26 @@
 		const regionSelect = document.getElementById("region");
 		const prefectureSelect = document.getElementById("prefecture");
 
+		// 編集時に都道府県を初期選択
+		window.addEventListener("DOMContentLoaded", () => {
+			const selectedPref = /*[[${trip.prefecture}]]*/ "";
+			if (selectedPref) {
+				for (let region in prefectures) {
+					if (prefectures[region].includes(selectedPref)) {
+						regionSelect.value = region;
+						prefectures[region].forEach(pref => {
+							let opt = document.createElement("option");
+							opt.value = pref;
+							opt.textContent = pref;
+							if (pref === selectedPref) opt.selected = true;
+							prefectureSelect.appendChild(opt);
+						});
+					}
+				}
+			}
+		});
+
+		// 地方選択時に都道府県を更新
 		regionSelect.addEventListener("change", function () {
 			const region = this.value;
 			prefectureSelect.innerHTML = "<option value=''>選択してください</option>";
@@ -159,6 +186,7 @@
 			}
 		});
 	</script>
+
 </body>
 
 </html>

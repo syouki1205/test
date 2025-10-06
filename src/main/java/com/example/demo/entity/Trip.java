@@ -24,10 +24,13 @@ public class Trip {
 
 	private String title;
 	private String prefecture;
-	private LocalDate date;
+
+	// ✅ 単一日付を廃止し、旅行期間に対応
+	private LocalDate startDate;
+	private LocalDate endDate;
 
 	// 旅行ごとの評価・コメント
-	private Integer rating; // 1〜5
+	private Integer rating; // 1〜10に対応（必要なら調整）
 	@Column(length = 1000)
 	private String comment;
 
@@ -41,7 +44,7 @@ public class Trip {
 	public Trip() {
 	}
 
-	// getter / setter
+	// --- Getter / Setter ---
 	public Long getId() {
 		return id;
 	}
@@ -66,12 +69,20 @@ public class Trip {
 		this.prefecture = prefecture;
 	}
 
-	public LocalDate getDate() {
-		return date;
+	public LocalDate getStartDate() {
+		return startDate;
 	}
 
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
 	}
 
 	public Integer getRating() {

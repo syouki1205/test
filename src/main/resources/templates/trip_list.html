@@ -119,7 +119,7 @@
 	<!-- 並び替えフォーム -->
 	<form method="get" action="/trips" class="sort-box d-flex align-items-center">
 		<select name="sortBy" class="form-select w-auto me-2">
-			<option value="date" th:selected="${sortBy == 'date'}">日付</option>
+			<option value="startDate" th:selected="${sortBy == 'startDate'}">出発日</option>
 			<option value="rating" th:selected="${sortBy == 'rating'}">評価</option>
 		</select>
 		<select name="order" class="form-select w-auto me-2">
@@ -135,7 +135,7 @@
 			<tr>
 				<th>タイトル</th>
 				<th>都道府県</th>
-				<th>日付</th>
+				<th>期間</th>
 				<th>評価</th>
 				<th>操作</th>
 			</tr>
@@ -144,7 +144,7 @@
 			<tr th:each="trip : ${trips}">
 				<td th:text="${trip.title}"></td>
 				<td th:text="${trip.prefecture}"></td>
-				<td th:text="${trip.date}"></td>
+				<td th:text="${trip.startDate} + ' 〜 ' + ${trip.endDate}"></td>
 				<td th:text="${trip.rating}"></td>
 				<td>
 					<a th:href="@{'/trips/' + ${trip.id}}" class="btn btn-info btn-sm">詳細</a>
@@ -162,23 +162,23 @@
 
 	<script>
 		const prefectures = {
-			"北海道・東北": ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県"],
-			"関東": ["茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県"],
-			"中部": ["新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県"],
-			"近畿": ["滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県"],
-			"中国": ["鳥取県","島根県","岡山県","広島県","山口県"],
-			"四国": ["徳島県","香川県","愛媛県","高知県"],
-			"九州・沖縄": ["福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"]
+			"北海道・東北": ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],
+			"関東": ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"],
+			"中部": ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県", "三重県"],
+			"近畿": ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"],
+			"中国": ["鳥取県", "島根県", "岡山県", "広島県", "山口県"],
+			"四国": ["徳島県", "香川県", "愛媛県", "高知県"],
+			"九州・沖縄": ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"]
 		};
 
 		const regionSelect = document.getElementById("region");
 		const prefectureSelect = document.getElementById("prefecture");
 
-		regionSelect.addEventListener("change", function() {
+		regionSelect.addEventListener("change", function () {
 			const region = this.value;
 			prefectureSelect.innerHTML = "<option value=''>都道府県を選択</option>";
 
-			if(region && prefectures[region]) {
+			if (region && prefectures[region]) {
 				prefectures[region].forEach(pref => {
 					const opt = document.createElement("option");
 					opt.value = pref;
@@ -190,4 +190,5 @@
 	</script>
 
 </body>
+
 </html>
