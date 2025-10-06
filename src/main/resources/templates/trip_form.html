@@ -77,6 +77,7 @@
 		<form th:action="${trip.id != null} ? @{/trips/{id}/update(id=${trip.id})} : @{/trips}" th:object="${trip}"
 			method="post">
 
+			<!-- タイトル -->
 			<div class="mb-3">
 				<label for="title" class="form-label">タイトル</label>
 				<input type="text" id="title" th:field="*{title}" class="form-control" required />
@@ -85,7 +86,7 @@
 			<!-- 地方プルダウン -->
 			<div class="mb-3">
 				<label for="region" class="form-label">地方</label>
-				<select id="region" class="form-select">
+				<select id="region" th:field="*{region}" class="form-select">
 					<option value="">選択してください</option>
 					<option value="北海道・東北">北海道・東北</option>
 					<option value="関東">関東</option>
@@ -109,26 +110,27 @@
 			<div class="row mb-3">
 				<div class="col-md-6">
 					<label for="startDate" class="form-label">開始日</label>
-					<input type="date" id="startDate" th:field="*{startDate}"
-						th:value="${#temporals.format(trip.startDate, 'yyyy-MM-dd')}" class="form-control" required />
+					<input type="date" id="startDate" th:field="*{startDate}" class="form-control" required />
 				</div>
 				<div class="col-md-6">
 					<label for="endDate" class="form-label">終了日</label>
-					<input type="date" id="endDate" th:field="*{endDate}"
-						th:value="${#temporals.format(trip.endDate, 'yyyy-MM-dd')}" class="form-control" required />
+					<input type="date" id="endDate" th:field="*{endDate}" class="form-control" required />
 				</div>
 			</div>
 
+			<!-- 総合評価 -->
 			<div class="mb-3">
 				<label for="rating" class="form-label">総合評価 (1〜10)</label>
 				<input type="number" id="rating" th:field="*{rating}" min="1" max="10" class="form-control" />
 			</div>
 
+			<!-- レビュー -->
 			<div class="mb-3">
 				<label for="comment" class="form-label">レビュー</label>
 				<textarea id="comment" th:field="*{comment}" class="form-control"></textarea>
 			</div>
 
+			<!-- ボタン -->
 			<div class="text-center">
 				<button type="submit" class="btn btn-primary me-2"
 					th:text="${trip.id != null} ? '更新' : '追加'">送信</button>
@@ -137,8 +139,8 @@
 		</form>
 	</div>
 
-	<!-- ▼ JavaScriptで地方→都道府県を連動 -->
-	<script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
 		const prefectures = {
 			"北海道・東北": ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],
 			"関東": ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"],
@@ -152,40 +154,38 @@
 		const regionSelect = document.getElementById("region");
 		const prefectureSelect = document.getElementById("prefecture");
 
-		// 編集時に都道府県を初期選択
-		window.addEventListener("DOMContentLoaded", () => {
-			const selectedPref = /*[[${trip.prefecture}]]*/ "";
-			if (selectedPref) {
-				for (let region in prefectures) {
-					if (prefectures[region].includes(selectedPref)) {
-						regionSelect.value = region;
-						prefectures[region].forEach(pref => {
-							let opt = document.createElement("option");
-							opt.value = pref;
-							opt.textContent = pref;
-							if (pref === selectedPref) opt.selected = true;
-							prefectureSelect.appendChild(opt);
-						});
-					}
-				}
-			}
-		});
-
-		// 地方選択時に都道府県を更新
-		regionSelect.addEventListener("change", function () {
-			const region = this.value;
+		function populatePrefectures(selectedPref) {
+			const region = regionSelect.value;
 			prefectureSelect.innerHTML = "<option value=''>選択してください</option>";
-
 			if (region && prefectures[region]) {
 				prefectures[region].forEach(pref => {
-					let opt = document.createElement("option");
+					const opt = document.createElement("option");
 					opt.value = pref;
 					opt.textContent = pref;
+					if (pref === selectedPref) opt.selected = true;
 					prefectureSelect.appendChild(opt);
 				});
 			}
+		}
+
+		window.addEventListener("DOMContentLoaded", () => {
+			// 編集時に選択されている都道府県
+			const selectedPref = /*[[${trip.prefecture != null} ? ${trip.prefecture} : '' ]]*/ '';
+			let selectedRegion = "";
+			for (const [region, prefs] of Object.entries(prefectures)) {
+				if (prefs.includes(selectedPref)) {
+					selectedRegion = region;
+					break;
+				}
+			}
+			if (selectedRegion) regionSelect.value = selectedRegion;
+			populatePrefectures(selectedPref);
 		});
+
+		regionSelect.addEventListener("change", () => populatePrefectures(""));
+		/*]]>*/
 	</script>
+
 
 </body>
 

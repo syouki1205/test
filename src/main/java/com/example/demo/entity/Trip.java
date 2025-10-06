@@ -14,6 +14,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
 @Table(name = "trips")
 public class Trip {
@@ -23,14 +25,17 @@ public class Trip {
 	private Long id;
 
 	private String title;
+	private String region;
 	private String prefecture;
 
-	// ✅ 単一日付を廃止し、旅行期間に対応
+	@DateTimeFormat(pattern = "yyyy-MM-dd") // ← 追加
 	private LocalDate startDate;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd") // ← 追加
 	private LocalDate endDate;
 
-	// 旅行ごとの評価・コメント
-	private Integer rating; // 1〜10に対応（必要なら調整）
+	private Integer rating;
+
 	@Column(length = 1000)
 	private String comment;
 
@@ -59,6 +64,14 @@ public class Trip {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 
 	public String getPrefecture() {
