@@ -13,7 +13,7 @@ import com.example.demo.repository.UserRepository;
 
 @Controller
 public class MyPageController {
-
+//aaaaaa
 	private final UserRepository userRepository;
 
 	public MyPageController(UserRepository userRepository) {
