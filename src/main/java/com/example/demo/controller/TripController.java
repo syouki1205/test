@@ -106,7 +106,6 @@ public class TripController {
     @GetMapping("/new")
     public String newTrip(Model model) {
         Trip trip = new Trip();
-        trip.setPrefecture("東京都"); // デフォルト選択
         model.addAttribute("trip", trip);
         model.addAttribute("regions", REGION_MAP);
         return "trip_form";
