@@ -19,7 +19,7 @@ import com.example.demo.entity.Trip;
 import com.example.demo.entity.User;
 import com.example.demo.repository.TripRepository;
 import com.example.demo.repository.UserRepository;
-
+//a
 @Controller
 @RequestMapping("/trips")
 public class TripController {
