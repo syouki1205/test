@@ -69,6 +69,27 @@
 		.btn-danger {
 			font-weight: 600;
 		}
+
+		/* ⭐ 星評価デザイン（小数点対応） */
+		.rating-container {
+			position: relative;
+			display: inline-block;
+			font-size: 1.2rem;
+			line-height: 1;
+		}
+
+		.stars-bg {
+			color: #ccc;
+		}
+
+		.stars-fill {
+			color: #f4b400;
+			position: absolute;
+			top: 0;
+			left: 0;
+			white-space: nowrap;
+			overflow: hidden;
+		}
 	</style>
 </head>
 
@@ -107,8 +128,16 @@
 			</select>
 		</div>
 
+		<!-- 最低評価プルダウン（小数点対応） -->
 		<div class="col-auto">
-			<input type="number" name="minRating" th:value="${minRating}" class="form-control" placeholder="最低評価">
+			<label for="minRating" class="form-label visually-hidden">最低評価</label>
+			<select name="minRating" id="minRating" class="form-select">
+				<option value="">最低評価</option>
+				<option th:each="i : ${#numbers.sequence(0,50,1)}" th:value="${i / 10.0}"
+					th:text="${#numbers.formatDecimal(i / 10.0,1,1)}"
+					th:selected="${minRating != null && minRating == i / 10.0}">
+				</option>
+			</select>
 		</div>
 
 		<div class="col-auto">
@@ -144,13 +173,20 @@
 			<tr th:each="trip : ${trips}">
 				<td th:text="${trip.title}"></td>
 				<td th:text="${trip.prefecture}"></td>
-				<td th:text="${trip.startDate} + ' 〜 ' + ${trip.endDate}"></td>
-				<td th:text="${trip.rating}"></td>
+				<td
+					th:text="${#temporals.format(trip.startDate, 'yyyy/MM/dd')} + ' 〜 ' + ${#temporals.format(trip.endDate, 'yyyy/MM/dd')}">
+				</td>
+				<td>
+					<span th:text="${#numbers.formatDecimal(trip.rating, 1, 1)}"></span> / 5
+					<span class="rating-container">
+						<span class="stars-bg">★★★★★</span>
+						<span class="stars-fill" th:style="'width:' + (${trip.rating} / 5 * 100) + '%'">★★★★★</span>
+					</span>
+				</td>
 				<td>
 					<a th:href="@{'/trips/' + ${trip.id}}" class="btn btn-info btn-sm">詳細</a>
 					<a th:href="@{'/trips/' + ${trip.id} + '/edit'}" class="btn btn-warning btn-sm">編集</a>
 
-					<!-- ✅ 削除フォーム（POST対応＋CSRF保護） -->
 					<form th:action="@{'/trips/' + ${trip.id} + '/delete'}" method="post" style="display:inline;"
 						onsubmit="return confirm('削除してもよろしいですか？');">
 						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -165,6 +201,7 @@
 		<a th:href="@{/trips/new}" class="btn btn-success">＋ 新規追加</a>
 	</div>
 
+	<!-- 都道府県選択スクリプト -->
 	<script>
 		const prefectures = {
 			"北海道・東北": ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],

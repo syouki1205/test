@@ -26,16 +26,6 @@
 			margin-bottom: 25px;
 		}
 
-		.trip-info p {
-			font-size: 1.05rem;
-			margin-bottom: 8px;
-		}
-
-		.trip-info span {
-			font-weight: 600;
-			color: #444;
-		}
-
 		h3 {
 			font-weight: bold;
 			color: #444;
@@ -56,11 +46,6 @@
 			font-weight: 600;
 		}
 
-		.table tbody tr:hover {
-			background-color: #f9fcff;
-			transition: background 0.3s;
-		}
-
 		.btn-primary {
 			background-color: #0056b3;
 			border-color: #004494;
@@ -78,15 +63,34 @@
 		.btn-secondary {
 			font-weight: 600;
 		}
+
+		/* ⭐ 星評価デザイン（小数点対応） */
+		.rating-container {
+			position: relative;
+			display: inline-block;
+			font-size: 1.4rem;
+			line-height: 1;
+		}
+
+		.stars-bg {
+			color: #ccc;
+		}
+
+		.stars-fill {
+			color: #f4b400;
+			position: absolute;
+			top: 0;
+			left: 0;
+			white-space: nowrap;
+			overflow: hidden;
+		}
 	</style>
 </head>
 
 <body class="container mt-4">
 
-	<!-- タイトル -->
 	<h1 th:text="${trip.title}">旅行タイトル</h1>
 
-	<!-- 旅行情報 -->
 	<div class="trip-info">
 		<p>都道府県: <span th:text="${trip.prefecture}"></span></p>
 		<p>
@@ -95,11 +99,19 @@
 			〜
 			<span th:text="${#temporals.format(trip.endDate, 'yyyy/MM/dd')}"></span>
 		</p>
-		<p>総合評価: <span th:text="${trip.rating}"></span></p>
+		<p>
+			総合評価:
+			<!-- 小数点1桁固定 -->
+			<span th:text="${#numbers.formatDecimal(trip.rating, 1, 1)}"></span> / 5
+			<!-- 星表示（小数点対応） -->
+			<span class="rating-container">
+				<span class="stars-bg">★★★★★</span>
+				<span class="stars-fill" th:style="'width:' + (${trip.rating} / 5 * 100) + '%'">★★★★★</span>
+			</span>
+		</p>
 		<p>レビュー: <span th:text="${trip.comment}"></span></p>
 	</div>
 
-	<!-- スポット一覧 -->
 	<h3>スポット一覧</h3>
 	<table class="table table-bordered">
 		<thead>
@@ -115,7 +127,15 @@
 			<tr th:each="spot : ${trip.spots}">
 				<td th:text="${spot.name}">スポット名</td>
 				<td th:text="${spot.category}">カテゴリ</td>
-				<td th:text="${spot.rating}">評価</td>
+				<td>
+					<!-- 小数点1桁固定 -->
+					<span th:text="${#numbers.formatDecimal(spot.rating, 1, 1)}"></span> / 5
+					<!-- 星表示（小数点対応） -->
+					<span class="rating-container">
+						<span class="stars-bg">★★★★★</span>
+						<span class="stars-fill" th:style="'width:' + (${spot.rating} / 5 * 100) + '%'">★★★★★</span>
+					</span>
+				</td>
 				<td th:text="${spot.comment}">コメント</td>
 				<td>
 					<a th:href="@{'/trips/' + ${trip.id} + '/spots/' + ${spot.id} + '/edit'}"
@@ -127,7 +147,6 @@
 		</tbody>
 	</table>
 
-	<!-- 操作ボタン -->
 	<div class="mt-3">
 		<a class="btn btn-primary" th:href="@{'/trips/' + ${trip.id} + '/spots/new'}">＋ スポット追加</a>
 		<a class="btn btn-secondary ms-2" th:href="@{/trips}">戻る</a>

@@ -23,7 +23,6 @@
 			margin: 0 auto;
 		}
 
-		/* タイトル */
 		h1 {
 			text-align: center;
 			font-weight: bold;
@@ -31,13 +30,11 @@
 			margin-bottom: 25px;
 		}
 
-		/* ラベルを少し強調 */
 		.form-label {
 			font-weight: 600;
 			color: #444;
 		}
 
-		/* 入力フィールドの強調 */
 		.form-control,
 		.form-select {
 			border-radius: 8px;
@@ -51,7 +48,6 @@
 			box-shadow: 0 0 6px rgba(90, 141, 238, 0.3);
 		}
 
-		/* ボタン */
 		.btn-primary {
 			background-color: #0056b3;
 			border-color: #004494;
@@ -74,18 +70,18 @@
 
 <body class="container mt-4">
 	<div class="form-card">
-		<!-- フォームタイトル -->
 		<h1 th:text="${spot.id != null} ? 'スポット編集' : 'スポット追加'">スポットフォーム</h1>
 
-		<!-- フォーム -->
 		<form th:action="${spot.id != null} ? @{/trips/{tripId}/spots/{spotId}/update(tripId=${trip.id}, spotId=${spot.id})} 
                                      : @{/trips/{tripId}/spots(tripId=${trip.id})}" th:object="${spot}" method="post">
 
+			<!-- スポット名 -->
 			<div class="mb-3">
 				<label for="name" class="form-label">スポット名</label>
 				<input type="text" id="name" th:field="*{name}" class="form-control" required />
 			</div>
 
+			<!-- カテゴリ -->
 			<div class="mb-3">
 				<label for="category" class="form-label">カテゴリ</label>
 				<select id="category" th:field="*{category}" class="form-select" required>
@@ -97,20 +93,29 @@
 					<option value="歴史">歴史</option>
 					<option value="宿泊">宿泊</option>
 					<option value="その他">その他</option>
-					
 				</select>
 			</div>
 
+			<!-- 評価（1〜5、小数点1桁固定） -->
 			<div class="mb-3">
-				<label for="rating" class="form-label">評価</label>
-				<input type="number" id="rating" th:field="*{rating}" class="form-control" min="1" max="10" required />
+				<label for="rating" class="form-label">評価 (0〜5、小数点可)</label>
+				<select id="rating" th:field="*{rating}" class="form-select" required>
+					<option value="">選択してください</option>
+					<!-- 小数点1桁で1.0〜5.0まで作成 -->
+					<option th:each="i : ${#numbers.sequence(0,50,1)}" th:value="${i / 10.0}"
+						th:text="${#numbers.formatDecimal(i / 10.0, 1, 1)}">
+					</option>
+				</select>
+				<div class="form-text text-muted">例：3.5 や 4.8 なども選択できます</div>
 			</div>
 
+			<!-- コメント -->
 			<div class="mb-3">
 				<label for="comment" class="form-label">コメント</label>
 				<textarea id="comment" th:field="*{comment}" class="form-control" rows="4"></textarea>
 			</div>
 
+			<!-- ボタン -->
 			<div class="d-flex justify-content-center">
 				<button type="submit" class="btn btn-primary" th:text="${spot.id != null} ? '更新' : '追加'">送信</button>
 				<a th:href="@{'/trips/' + ${trip.id}}" class="btn btn-secondary ms-2">戻る</a>

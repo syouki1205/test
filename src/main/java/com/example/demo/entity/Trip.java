@@ -34,7 +34,7 @@ public class Trip {
 	@DateTimeFormat(pattern = "yyyy-MM-dd") // ← 追加
 	private LocalDate endDate;
 
-	private Integer rating;
+	private Double rating;
 
 	@Column(length = 1000)
 	private String comment;
@@ -98,11 +98,11 @@ public class Trip {
 		this.endDate = endDate;
 	}
 
-	public Integer getRating() {
+	public Double getRating() {
 		return rating;
 	}
 
-	public void setRating(Integer rating) {
+	public void setRating(Double rating) {
 		this.rating = rating;
 	}
 

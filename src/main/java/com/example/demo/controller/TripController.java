@@ -49,7 +49,7 @@ public class TripController {
 	public String listTrips(
 			@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) String prefecture,
-			@RequestParam(required = false) Integer minRating,
+			@RequestParam(required = false) Double minRating,
 			@RequestParam(defaultValue = "startDate") String sortBy,
 			@RequestParam(defaultValue = "desc") String order,
 			Model model,
