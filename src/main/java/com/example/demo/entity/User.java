@@ -27,6 +27,9 @@ public class User {
 
 	private String email;
 
+	// ✅ 追加：ユーザーごとのプロフィール画像パス
+	private String profileImagePath;
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Trip> trips;
 
@@ -78,5 +81,13 @@ public class User {
 
 	public void setTrips(List<Trip> trips) {
 		this.trips = trips;
+	}
+
+	public String getProfileImagePath() {
+		return profileImagePath;
+	}
+
+	public void setProfileImagePath(String profileImagePath) {
+		this.profileImagePath = profileImagePath;
 	}
 }

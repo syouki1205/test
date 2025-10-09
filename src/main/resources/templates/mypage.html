@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<title>マイページ</title>
+	<title th:text="${user.username} + ' さんのマイページ'">マイページ</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -44,6 +44,7 @@
 			margin: 0 auto 1rem;
 			border: 3px solid #007bff;
 			display: block;
+			background-color: #f8f9fa;
 		}
 
 		.btn {
@@ -114,8 +115,11 @@
 <body>
 	<div class="container py-5 d-flex justify-content-center align-items-start">
 		<div class="card p-5 shadow-sm" style="max-width: 450px; width: 100%;">
-			<!-- プロフィール画像 -->
-			<img src="/images/profiles/20251008114503.JPEG" alt="プロフィール画像" class="profile-img" />
+
+			<!-- ✅ ユーザーごとのプロフィール画像（未設定時はデフォルト） -->
+			<img th:src="${user.profileImagePath != null and !#strings.isEmpty(user.profileImagePath)} ?
+					@{${user.profileImagePath}} :
+					@{/images/default-profile.png}" alt="プロフィール画像" class="profile-img" />
 
 			<!-- ユーザー名 -->
 			<h2 th:text="${user.username} + ' さんのマイページ'">マイページ</h2>
@@ -125,7 +129,7 @@
 			<!-- 統計表示 -->
 			<div class="stats">
 				<span>旅行総数: <strong th:text="${tripCount}">0</strong></span>
-				<span>訪れた都道府県の数: <strong th:text="${distinctPrefectureCount}">0</strong></span>
+				<span>訪れた都道府県数: <strong th:text="${distinctPrefectureCount}">0</strong></span>
 			</div>
 
 			<!-- 最近の旅行履歴 -->
@@ -141,7 +145,8 @@
 
 			<hr>
 
-			<div class="d-flex flex-column gap-3">
+			<!-- ✅ 本人のみボタン表示 -->
+			<div class="d-flex flex-column gap-3" th:if="${user.id == loginUser.id}">
 				<a href="/trips" class="btn btn-primary w-100">
 					<i class="bi bi-airplane-fill me-2"></i>旅行一覧を見る
 				</a>
@@ -156,6 +161,17 @@
 					</button>
 				</form>
 			</div>
+
+			<!-- ✅ 他人のマイページ閲覧時 -->
+			<div class="d-flex flex-column gap-3" th:if="${user.id != loginUser.id}">
+				<a href="/trips" class="btn btn-primary w-100">
+					<i class="bi bi-airplane-fill me-2"></i>旅行一覧を見る
+				</a>
+				<a href="/mypage" class="btn btn-outline-secondary w-100">
+					<i class="bi bi-arrow-left-circle me-2"></i>自分のマイページへ戻る
+				</a>
+			</div>
+
 		</div>
 	</div>
 </body>

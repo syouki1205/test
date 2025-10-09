@@ -15,13 +15,13 @@ import com.example.demo.service.UserDetailsServiceImpl;
 @Configuration
 public class SecurityConfig {
 
-	// パスワードのハッシュ化方式
+	// パスワードのハッシュ化方式（BCrypt）
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	// UserDetailsServiceImpl を Bean 化して、UserRepository を注入
+	// UserDetailsServiceImpl を Bean 化
 	@Bean
 	public UserDetailsService userDetailsService(UserRepository userRepository) {
 		return new UserDetailsServiceImpl(userRepository);
@@ -41,8 +41,10 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.authorizeHttpRequests(auth -> auth
+						// 🔓 静的ファイルと登録ページは誰でもアクセス可能
 						.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-						.requestMatchers("/login", "/signup").permitAll()
+						.requestMatchers("/login", "/register", "/signup").permitAll()
+						// それ以外はログイン必須
 						.anyRequest().authenticated())
 				.formLogin(form -> form
 						.loginPage("/login")

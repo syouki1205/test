@@ -6,7 +6,6 @@
 	<title>ログイン</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<style>
-		/* 背景 */
 		body {
 			background: linear-gradient(to right, #f0f4ff, #d9e4ff);
 			font-family: "Segoe UI", Arial, sans-serif;
@@ -16,7 +15,6 @@
 			justify-content: center;
 		}
 
-		/* ログインカード */
 		.login-card {
 			background: #fff;
 			padding: 40px 30px;
@@ -63,7 +61,22 @@
 			background-color: #004494;
 		}
 
-		/* メッセージ */
+		.signup-link {
+			display: block;
+			text-align: center;
+			margin-top: 15px;
+			font-weight: 600;
+		}
+
+		.signup-link a {
+			color: #0056b3;
+			text-decoration: none;
+		}
+
+		.signup-link a:hover {
+			text-decoration: underline;
+		}
+
 		p.text-danger,
 		p.text-success {
 			text-align: center;
@@ -85,6 +98,7 @@
 	<div class="login-card">
 		<h1>ログイン</h1>
 
+		<!-- エラーメッセージ -->
 		<p th:if="${param.error}" class="text-danger">ユーザー名またはパスワードが間違っています</p>
 		<p th:if="${param.logout}" class="text-success">ログアウトしました</p>
 
@@ -99,6 +113,11 @@
 			</div>
 			<button type="submit" class="btn btn-primary">ログイン</button>
 		</form>
+
+		<!-- 新規登録リンク -->
+		<div class="signup-link">
+			<p>アカウントをお持ちでない方は <a th:href="@{/register}">新規登録</a></p>
+		</div>
 	</div>
 </body>
 

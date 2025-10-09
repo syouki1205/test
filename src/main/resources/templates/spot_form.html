@@ -98,7 +98,7 @@
 
 			<!-- 評価（1〜5、小数点1桁固定） -->
 			<div class="mb-3">
-				<label for="rating" class="form-label">評価 (0〜5、小数点可)</label>
+				<label for="rating" class="form-label">評価</label>
 				<select id="rating" th:field="*{rating}" class="form-select" required>
 					<option value="">選択してください</option>
 					<!-- 小数点1桁で1.0〜5.0まで作成 -->
@@ -106,7 +106,7 @@
 						th:text="${#numbers.formatDecimal(i / 10.0, 1, 1)}">
 					</option>
 				</select>
-				<div class="form-text text-muted">例：3.5 や 4.8 なども選択できます</div>
+				
 			</div>
 
 			<!-- コメント -->
