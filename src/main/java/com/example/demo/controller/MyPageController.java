@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.List;
 
@@ -24,60 +26,62 @@ public class MyPageController {
 		this.tripRepository = tripRepository;
 	}
 
-	/**
-	 * ✅ 自分のマイページ（ログインユーザー専用）
-	 * URL: /mypage
-	 * → 自分のユーザーIDにリダイレクト
-	 */
 	@GetMapping("/mypage")
 	public String showMyPage(Model model, Principal principal) {
 		if (principal == null) {
-			// ログインしていない場合、ログインページへリダイレクト
 			return "redirect:/login";
 		}
 
-		// ログイン中ユーザー取得
 		User loginUser = userRepository.findByUsername(principal.getName())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
-		// 自分のページにリダイレクト
 		return "redirect:/mypage/" + loginUser.getId();
 	}
 
-	/**
-	 * ✅ 指定したユーザーのマイページ表示
-	 * URL: /mypage/{userId}
-	 */
 	@GetMapping("/mypage/{userId}")
 	public String showUserPage(@PathVariable Long userId, Model model, Principal principal) {
-		// --- 表示対象ユーザー ---
+
+		// 表示対象ユーザー
 		User targetUser = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		model.addAttribute("user", targetUser);
 
-		// --- ログインユーザー ---
+		// ログインユーザー
 		User loginUser = null;
 		if (principal != null) {
-			loginUser = userRepository.findByUsername(principal.getName())
-					.orElse(null);
+			loginUser = userRepository.findByUsername(principal.getName()).orElse(null);
 		}
 		model.addAttribute("loginUser", loginUser);
 
-		// --- 最近の旅行（最新3件などに変更可） ---
+		// 最近の旅行
 		List<Trip> recentTrips = tripRepository.findTop1ByUserOrderByStartDateDesc(targetUser);
 		model.addAttribute("recentTrips", recentTrips);
 
-		// --- 統計情報 ---
+		// 統計情報
 		long tripCount = tripRepository.countByUser(targetUser);
 		long distinctPrefectureCount = tripRepository.countDistinctPrefectureByUser(targetUser);
-
 		model.addAttribute("tripCount", tripCount);
 		model.addAttribute("distinctPrefectureCount", distinctPrefectureCount);
 
-		// ✅ プロフィール画像の切り替え（ユーザーIDごとにファイルを分ける想定）
-		String profileImagePath = "/images/profiles/user_" + targetUser.getId() + ".jpeg";
+		// プロフィール画像パス
+		String profileImagePath;
+
+		if ("syouki".equals(targetUser.getUsername())) {
+			// syoukiは常に既存の画像
+			profileImagePath = "/images/default-profile.jpeg";
+		} else {
+			// その他のユーザーは個別画像があれば使用、なければ新しいデフォルト
+			String userImagePath = "src/main/resources/static/images/profiles/user_" + targetUser.getId() + ".jpeg";
+			String defaultImagePath = "/images/default-profile-new.jpeg";
+			if (Files.exists(Paths.get(userImagePath))) {
+				profileImagePath = "/images/profiles/user_" + targetUser.getId() + ".jpeg";
+			} else {
+				profileImagePath = defaultImagePath;
+			}
+		}
+
 		model.addAttribute("profileImagePath", profileImagePath);
 
-		return "mypage"; // → mypage.html へ
+		return "mypage";
 	}
 }

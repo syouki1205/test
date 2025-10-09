@@ -116,10 +116,9 @@
 	<div class="container py-5 d-flex justify-content-center align-items-start">
 		<div class="card p-5 shadow-sm" style="max-width: 450px; width: 100%;">
 
-			<!-- ✅ ユーザーごとのプロフィール画像（未設定時はデフォルト） -->
-			<img th:src="${user.profileImagePath != null and !#strings.isEmpty(user.profileImagePath)} ?
-					@{${user.profileImagePath}} :
-					@{/images/default-profile.png}" alt="プロフィール画像" class="profile-img" />
+			<!-- ユーザーのプロフィール画像（未設定時はデフォルトJPEG） -->
+			<img th:src="@{${profileImagePath}}" alt="プロフィール画像" class="profile-img" />
+
 
 			<!-- ユーザー名 -->
 			<h2 th:text="${user.username} + ' さんのマイページ'">マイページ</h2>
@@ -145,7 +144,7 @@
 
 			<hr>
 
-			<!-- ✅ 本人のみボタン表示 -->
+			<!-- 本人のみボタン表示 -->
 			<div class="d-flex flex-column gap-3" th:if="${user.id == loginUser.id}">
 				<a href="/trips" class="btn btn-primary w-100">
 					<i class="bi bi-airplane-fill me-2"></i>旅行一覧を見る
@@ -162,7 +161,7 @@
 				</form>
 			</div>
 
-			<!-- ✅ 他人のマイページ閲覧時 -->
+			<!-- 他人のマイページ閲覧時 -->
 			<div class="d-flex flex-column gap-3" th:if="${user.id != loginUser.id}">
 				<a href="/trips" class="btn btn-primary w-100">
 					<i class="bi bi-airplane-fill me-2"></i>旅行一覧を見る
